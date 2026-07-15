@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quadratic Solver Strategy Lab</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f6f9fb;
+    color: #1f2933;
+    line-height: 1.6;
+    margin: 0;
+    padding: 20px;
+}
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+.hero {
+    background: #0f2d44;
+    color: white;
+    padding: 24px;
+    border-radius: 10px;
+}
+.card {
+    background: white;
+    border-left: 6px solid #2f80a8;
+    padding: 18px;
+    border-radius: 10px;
+    margin-top: 18px;
+}
+.green {
+    background: #eefaf1;
+    border-left-color: #3ca65c;
+}
+.yellow {
+    background: #fff8e6;
+    border-left-color: #f2b705;
+}
+.red {
+    background: #fdecea;
+    border-left-color: #c0392b;
+}
+.purple {
+    background: #f3e5f5;
+    border-left-color: #9c64a6;
+}
+.problem {
+    background: #f6f9fb;
+    border: 1px solid #d6e6ef;
+    padding: 16px;
+    border-radius: 8px;
+    font-size: 22px;
+    margin: 12px 0;
+}
+button {
+    background: #0f2d44;
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 6px 4px 6px 0;
+}
+button:hover {
+    background: #173f5f;
+}
+input {
+    width: 100%;
+    max-width: 520px;
+    padding: 12px;
+    font-size: 17px;
+    border: 2px solid #d6e6ef;
+    border-radius: 8px;
+    margin-top: 6px;
+    box-sizing: border-box;
+}
+.method {
+    display: inline-block;
+    background: #f0f7fb;
+    border: 2px solid #2f80a8;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin: 6px;
+    cursor: grab;
+    font-weight: bold;
+}
+.drop-zone {
+    min-height: 80px;
+    background: #ffffff;
+    border: 2px dashed #d6e6ef;
+    border-radius: 10px;
+    padding: 12px;
+    margin-top: 10px;
+}
+.drop-zone.over {
+    border-color: #2f80a8;
+    background: #f0f7fb;
+}
+.feedback {
+    margin-top: 12px;
+    font-weight: bold;
+}
+.correct {
+    color: #1f7a3a;
+}
+.incorrect {
+    color: #c0392b;
+}
+.hint {
+    display: none;
+    background: #fff8e6;
+    border-left: 6px solid #f2b705;
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+.complete {
+    display: none;
+}
+.step-box {
+    background: #f6f9fb;
+    border-left: 4px solid #d6e6ef;
+    padding: 12px;
+    border-radius: 8px;
+    margin: 12px 0;
+}
+@media (max-width: 700px) {
+    .problem {
+        font-size: 18px;
+    }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+    <div class="hero">
+        <h1>Algebra 2 | Unit 2 Week 2</h1>
+        <p>Quadratic Solver Strategy Lab</p>
+    </div>
+
+    <div class="card">
+        <h2>Mission Briefing</h2>
+        <p>In this lab, you will practice choosing methods for solving quadratic equations and then solve four equations using specific strategies.</p>
+        <p>This is extra practice, so you may check your answers, use hints, and try again.</p>
+        <p><strong>Progress:</strong> <span id="progress">0</span> / 5 parts complete</p>
+    </div>
+
+    <div class="card green">
+        <h2>Part 1 — Method Sort</h2>
+        <p>Look at the quadratic equation below. Drag each method into the correct category.</p>
+
+        <div class="problem">x<sup>2</sup> + 5x + 6 = 0</div>
+
+        <p>This equation can be solved using several methods, but some are more natural than others.</p>
+
+        <h3 style="color:#0f2d44;">Methods</h3>
+        <div id="methodBank">
+            <span class="method" draggable="true" data-method="factoring">Factoring</span>
+            <span class="method" draggable="true" data-method="quadraticFormula">Quadratic Formula</span>
+            <span class="method" draggable="true" data-method="completeSquare">Completing the Square</span>
+            <span class="method" draggable="true" data-method="squareRoots">Square Roots</span>
+            <span class="method" draggable="true" data-method="zeroProduct">Zero Product Property</span>
+        </div>
+
+        <h3 style="color:#0f2d44;">Could Be Used to Solve</h3>
+        <div class="drop-zone" id="couldUse"></div>
+
+        <h3 style="color:#0f2d44;">Would Not Use First</h3>
+        <div class="drop-zone" id="notFirst"></div>
+
+        <button onclick="checkSort()">Check Method Sort</button>
+        <button onclick="resetSort()">Reset Sort</button>
+
+        <div id="sortFeedback" class="feedback"></div>
+
+        <div class="hint" id="sortHint">
+            <strong>Hint:</strong> A quadratic trinomial can often be solved by factoring, the quadratic formula always works, and completing the square can also work. Square roots are best when the equation has an isolated squared term.
+        </div>
+        <button onclick="toggleHint('sortHint')">Show Hint</button>
+    </div>
+
+    <div class="card yellow">
+        <h2>Part 2A — Use the Zero Product Property</h2>
+        <div class="problem">(x - 4)(x + 7) = 0</div>
+
+        <div class="step-box">
+            <p><strong>Step 1:</strong> Set each factor equal to zero.</p>
+            <input id="zppStep1" placeholder="Example: x-4=0 and x+7=0">
+        </div>
+
+        <div class="step-box">
+            <p><strong>Step 2:</strong> Solve for x.</p>
+            <input id="zppAnswer" placeholder="Example: x=4 or x=-7">
+        </div>
+
+        <button onclick="checkZPP()">Check Zero Product Property</button>
+        <button onclick="toggleHint('zppHint')">Show Hint</button>
+        <div class="hint" id="zppHint">
+            Set each factor equal to zero: x - 4 = 0 and x + 7 = 0.
+        </div>
+        <div id="zppFeedback" class="feedback"></div>
+    </div>
+
+    <div class="card purple">
+        <h2>Part 2B — Use Square Roots</h2>
+        <div class="problem">x<sup>2</sup> + 49 = 0</div>
+
+        <div class="step-box">
+            <p><strong>Step 1:</strong> Isolate x<sup>2</sup>.</p>
+            <input id="sqrtStep1" placeholder="Example: x^2=-49">
+        </div>
+
+        <div class="step-box">
+            <p><strong>Step 2:</strong> Take the square root and write both solutions.</p>
+            <input id="sqrtAnswer" placeholder="Example: x=±7i">
+        </div>
+
+        <button onclick="checkSquareRoots()">Check Square Roots</button>
+        <button onclick="toggleHint('sqrtHint')">Show Hint</button>
+        <div class="hint" id="sqrtHint">
+            Move 49 to the other side. Since the result is negative, the solutions will include i.
+        </div>
+        <div id="sqrtFeedback" class="feedback"></div>
+    </div>
+
+    <div class="card green">
+        <h2>Part 2C — Solve by Factoring</h2>
+        <div class="problem">x<sup>2</sup> + 3x - 10 = 0</div>
+
+        <div class="step-box">
+            <p><strong>Step 1:</strong> Factor the quadratic.</p>
+            <input id="factorStep1" placeholder="Example: (x+5)(x-2)=0">
+        </div>
+
+        <div class="step-box">
+            <p><strong>Step 2:</strong> Use the Zero Product Property to solve.</p>
+            <input id="factorAnswer" placeholder="Example: x=-5 or x=2">
+        </div>
+
+        <button onclick="checkFactoring()">Check Factoring</button>
+        <button onclick="toggleHint('factorHint')">Show Hint</button>
+        <div class="hint" id="factorHint">
+            Find two numbers that multiply to -10 and add to 3.
+        </div>
+        <div id="factorFeedback" class="feedback"></div>
+    </div>
+
+    <div class="card red">
+        <h2>Part 2D — Use the Quadratic Formula</h2>
+        <div class="problem">x<sup>2</sup> - 6x + 13 = 0</div>
+
+        <div class="step-box">
+            <p><strong>Step 1:</strong> Identify a, b, and c.</p>
+            <input id="formulaStep1" placeholder="Example: a=1, b=-6, c=13">
+        </div>
+
+        <div class="step-box">
+            <p><strong>Step 2:</strong> Simplify the discriminant b<sup>2</sup> - 4ac.</p>
+            <input id="formulaStep2" placeholder="Example: -16">
+        </div>
+
+        <div class="step-box">
+            <p><strong>Step 3:</strong> Write the final solutions.</p>
+            <input id="formulaAnswer" placeholder="Example: x=3±2i">
+        </div>
+
+        <button onclick="checkFormula()">Check Quadratic Formula</button>
+        <button onclick="toggleHint('formulaHint')">Show Hint</button>
+        <div class="hint" id="formulaHint">
+            Here, a = 1, b = -6, and c = 13. The discriminant is negative, so the solutions are complex.
+        </div>
+        <div id="formulaFeedback" class="feedback"></div>
+    </div>
+
+    <div class="card green complete" id="completeMessage">
+        <h2>Lab Complete</h2>
+        <p>Excellent work! You practiced identifying possible solving methods and solved quadratic equations using four different strategies.</p>
+        <p>You are ready for the Teacher Check-In or Prove It! assignment.</p>
+    </div>
+
+    <p style="text-align:center;">
+        <button onclick="resetLab()">Reset Lab</button>
+    </p>
+
+</div>
+
+<script>
+let completed = {
+    sort: false,
+    zpp: false,
+    sqrt: false,
+    factoring: false,
+    formula: false
+};
+
+function normalize(input) {
+    return input
+        .toLowerCase()
+        .replace(/\s+/g, "")
+        .replace(/−/g, "-")
+        .replace(/\+\-/g, "-")
+        .replace(/\*\*/g, "^")
+        .replace(/x²/g, "x^2")
+        .replace(/plusminus/g, "±")
+        .replace(/\+\/-/g, "±")
+        .replace(/\+-/g, "±");
+}
+
+function containsAll(input, pieces) {
+    const n = normalize(input);
+    return pieces.every(piece => n.includes(normalize(piece)));
+}
+
+function markComplete(key) {
+    completed[key] = true;
+    const count = Object.values(completed).filter(Boolean).length;
+    document.getElementById("progress").textContent = count;
+
+    if (count === 5) {
+        document.getElementById("completeMessage").style.display = "block";
+        document.getElementById("completeMessage").scrollIntoView({ behavior: "smooth" });
+    }
+}
+
+function toggleHint(id) {
+    const el = document.getElementById(id);
+    el.style.display = el.style.display === "block" ? "none" : "block";
+}
+
+document.querySelectorAll(".method").forEach(item => {
+    item.addEventListener("dragstart", e => {
+        e.dataTransfer.setData("text/plain", e.target.dataset.method);
+        e.dataTransfer.setData("text/html", e.target.outerHTML);
+        e.target.classList.add("dragging");
+    });
+
+    item.addEventListener("dragend", e => {
+        e.target.classList.remove("dragging");
+    });
+});
+
+document.querySelectorAll(".drop-zone, #methodBank").forEach(zone => {
+    zone.addEventListener("dragover", e => {
+        e.preventDefault();
+        zone.classList.add("over");
+    });
+
+    zone.addEventListener("dragleave", () => {
+        zone.classList.remove("over");
+    });
+
+    zone.addEventListener("drop", e => {
+        e.preventDefault();
+        zone.classList.remove("over");
+
+        const method = e.dataTransfer.getData("text/plain");
+        const dragged = document.querySelector(`.method.dragging`);
+
+        if (dragged) {
+            zone.appendChild(dragged);
+        }
+    });
+});
+
+function getMethodsInZone(id) {
+    return Array.from(document.getElementById(id).querySelectorAll(".method"))
+        .map(el => el.dataset.method)
+        .sort();
+}
+
+function checkSort() {
+    const couldUse = getMethodsInZone("couldUse");
+    const notFirst = getMethodsInZone("notFirst");
+
+    const correctCouldUse = ["factoring", "quadraticFormula", "completeSquare"];
+    const correctNotFirst = ["squareRoots", "zeroProduct"];
+
+    const couldCorrect = JSON.stringify(couldUse) === JSON.stringify(correctCouldUse.sort());
+    const notCorrect = JSON.stringify(notFirst) === JSON.stringify(correctNotFirst.sort());
+
+    const feedback = document.getElementById("sortFeedback");
+
+    if (couldCorrect && notCorrect) {
+        feedback.innerHTML = `<span class="correct">Correct.</span> Factoring, completing the square, and the quadratic formula could solve this equation. Square roots and zero product property are not the best first move because the equation is not isolated or already factored.`;
+        markComplete("sort");
+    } else {
+        feedback.innerHTML = `<span class="incorrect">Not quite.</span> Think about which methods work once the expression is already factored, isolated, or still in standard form.`;
+    }
+}
+
+function resetSort() {
+    const bank = document.getElementById("methodBank");
+    document.querySelectorAll(".method").forEach(m => bank.appendChild(m));
+    document.getElementById("sortFeedback").innerHTML = "";
+}
+
+function checkZPP() {
+    const step1 = document.getElementById("zppStep1").value;
+    const answer = document.getElementById("zppAnswer").value;
+    const feedback = document.getElementById("zppFeedback");
+
+    const stepOk = containsAll(step1, ["x-4=0", "x+7=0"]);
+    const answerOk = containsAll(answer, ["x=4", "x=-7"]);
+
+    if (stepOk && answerOk) {
+        feedback.innerHTML = `<span class="correct">Correct.</span> Each factor was set equal to zero and solved.`;
+        markComplete("zpp");
+    } else {
+        feedback.innerHTML = `<span class="incorrect">Not quite.</span> Check both factors and both solutions.`;
+    }
+}
+
+function checkSquareRoots() {
+    const step1 = document.getElementById("sqrtStep1").value;
+    const answer = normalize(document.getElementById("sqrtAnswer").value);
+    const feedback = document.getElementById("sqrtFeedback");
+
+    const stepOk = normalize(step1).includes("x^2=-49");
+    const answerOk =
+        answer.includes("±7i") ||
+        containsAll(answer, ["x=7i", "x=-7i"]) ||
+        containsAll(answer, ["7i", "-7i"]);
+
+    if (stepOk && answerOk) {
+        feedback.innerHTML = `<span class="correct">Correct.</span> Since x² = -49, the solutions are x = ±7i.`;
+        markComplete("sqrt");
+    } else {
+        feedback.innerHTML = `<span class="incorrect">Not quite.</span> Isolate x² first, then remember that the square root of a negative number uses i.`;
+    }
+}
+
+function checkFactoring() {
+    const step1 = normalize(document.getElementById("factorStep1").value);
+    const answer = document.getElementById("factorAnswer").value;
+    const feedback = document.getElementById("factorFeedback");
+
+    const stepOk =
+        step1.includes("(x+5)(x-2)") ||
+        step1.includes("(x-2)(x+5)");
+
+    const answerOk = containsAll(answer, ["x=-5", "x=2"]);
+
+    if (stepOk && answerOk) {
+        feedback.innerHTML = `<span class="correct">Correct.</span> The trinomial factors as (x + 5)(x - 2), so x = -5 or x = 2.`;
+        markComplete("factoring");
+    } else {
+        feedback.innerHTML = `<span class="incorrect">Not quite.</span> Check the factorization first, then set each factor equal to zero.`;
+    }
+}
+
+function checkFormula() {
+    const step1 = normalize(document.getElementById("formulaStep1").value);
+    const step2 = normalize(document.getElementById("formulaStep2").value);
+    const answer = normalize(document.getElementById("formulaAnswer").value);
+    const feedback = document.getElementById("formulaFeedback");
+
+    const step1Ok =
+        step1.includes("a=1") &&
+        step1.includes("b=-6") &&
+        step1.includes("c=13");
+
+    const step2Ok = step2.includes("-16");
+
+    const answerOk =
+        answer.includes("x=3±2i") ||
+        containsAll(answer, ["x=3+2i", "x=3-2i"]) ||
+        containsAll(answer, ["3+2i", "3-2i"]);
+
+    if (step1Ok && step2Ok && answerOk) {
+        feedback.innerHTML = `<span class="correct">Correct.</span> The discriminant is -16, so the solutions are x = 3 ± 2i.`;
+        markComplete("formula");
+    } else {
+        feedback.innerHTML = `<span class="incorrect">Not quite.</span> Check a, b, c, the discriminant, and your final complex solutions.`;
+    }
+}
+
+function resetLab() {
+    completed = {
+        sort: false,
+        zpp: false,
+        sqrt: false,
+        factoring: false,
+        formula: false
+    };
+
+    document.getElementById("progress").textContent = "0";
+    document.getElementById("completeMessage").style.display = "none";
+
+    document.querySelectorAll("input").forEach(input => input.value = "");
+    document.querySelectorAll(".feedback").forEach(f => f.innerHTML = "");
+    document.querySelectorAll(".hint").forEach(h => h.style.display = "none");
+
+    resetSort();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+</script>
+
+</body>
+</html>
